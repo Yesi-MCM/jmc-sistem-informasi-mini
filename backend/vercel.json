@@ -10,7 +10,7 @@
     "VIEW_COMPILED_PATH": "/tmp",
     "LOG_CHANNEL": "stderr",
     "SESSION_DRIVER": "cookie",
-    "CACHE_STORE": "array"
+    "CACHE_STORE": "database"
   },
   "functions": {
     "api/index.php": {
