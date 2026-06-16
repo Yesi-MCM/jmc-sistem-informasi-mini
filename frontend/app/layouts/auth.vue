@@ -3,35 +3,46 @@
     <div
       class="login-cover bg-dark col-lg-7 d-flex align-items-end order-md-last d-none d-lg-block"
     >
-      <Swiper
-        :modules="[Autoplay, Pagination, Navigation]"
-        :loop="true"
-        :autoplay="{
-          delay: 5000,
-          disableOnInteraction: false,
-        }"
-        :pagination="{
-          clickable: true,
-        }"
-        :navigation="true"
-        class="swiper-login w-100 h-100"
-      >
-        <SwiperSlide>
+      <ClientOnly>
+        <Swiper
+          :modules="[Autoplay, Pagination, Navigation]"
+          :loop="true"
+          :autoplay="{
+            delay: 5000,
+            disableOnInteraction: false,
+          }"
+          :pagination="{
+            clickable: true,
+          }"
+          :navigation="true"
+          class="swiper-login w-100 h-100"
+        >
+          <SwiperSlide>
+            <img
+              src="~/assets/images/login/work01.jpeg"
+              alt="Login Cover 1"
+              class="cover"
+            />
+          </SwiperSlide>
+
+          <SwiperSlide>
+            <img
+              src="~/assets/images/login/work02.jpeg"
+              alt="Login Cover 2"
+              class="cover"
+            />
+          </SwiperSlide>
+        </Swiper>
+
+        <!-- Placeholder shown during SSR / before Swiper mounts -->
+        <template #fallback>
           <img
             src="~/assets/images/login/work01.jpeg"
-            alt="Login Cover 1"
+            alt="Login Cover"
             class="cover"
           />
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <img
-            src="~/assets/images/login/work02.jpeg"
-            alt="Login Cover 2"
-            class="cover"
-          />
-        </SwiperSlide>
-      </Swiper>
+        </template>
+      </ClientOnly>
     </div>
 
     <div class="loginbox d-flex align-items-center justify-content-center col">
