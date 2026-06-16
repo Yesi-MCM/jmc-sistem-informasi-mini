@@ -155,7 +155,7 @@ onMounted(() => {
 
 // Submit Stage 1
 const handleStage1 = async () => {
-  loading.value = ref(true);
+  loading.value = true;
   errorMessage.value = '';
 
   try {
@@ -197,7 +197,8 @@ const handleStage2 = async () => {
 
   try {
     await verifyOtp(tempToken.value, form.value.otp_code);
-    // Redirect is automatically handled by middleware/global state after login
+    // Redirect to dashboard after successful OTP verification
+    await navigateTo('/', { replace: true });
   } catch (e) {
     if (e.data && e.data.errors) {
       const errs = e.data.errors;
