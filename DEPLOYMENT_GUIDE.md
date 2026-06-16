@@ -93,7 +93,7 @@ Karena Anda tidak memiliki akses SSH langsung ke Vercel untuk menjalankan artisa
 | :--- | :--- | :--- |
 | `APP_NAME` | `Portal HRD JMC` | Nama aplikasi Anda |
 | `APP_ENV` | `production` | Set ke produksi |
-| `APP_KEY` | `base64:SYfZ/kGHChPq9YJYmJqd61N2Zw0aILe/ieawqqPuh1M=` | Salin kunci aplikasi Anda |
+| `APP_KEY` | `base64:SALIN_APP_KEY_DARI_ENV_LOKAL_ANDA` | Salin kunci aplikasi Anda (dapat dilihat dari berkas .env Anda) |
 | `APP_DEBUG` | `false` | Nonaktifkan debug untuk keamanan |
 | `DB_CONNECTION` | `mysql` | Driver database |
 | `DB_HOST` | `gateway01.xxxx.shared.aws.tidbcloud.com` | Host database TiDB Cloud Anda |
