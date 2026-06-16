@@ -134,11 +134,11 @@ export const useAuth = () => {
   const hasModuleAccess = (moduleCode) => {
     if (!user.value || !user.value.role) return false;
     
-    // Fixed RBAC check client side to matches API rules
     const role = user.value.role;
     
+    // Superadmin punya akses ke semua modul
     if (role === 'superadmin') {
-      return ['dashboard', 'role', 'user', 'profile', 'log'].includes(moduleCode);
+      return true;
     }
     
     if (role === 'manager_hrd') {

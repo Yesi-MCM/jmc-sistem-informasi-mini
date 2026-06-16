@@ -264,24 +264,24 @@
             data-bs-toggle="dropdown"
           >
             <span class="bg-primary text-white avatar rounded-circle">
-              {{ getInitials("User Name") }}
+              {{ getInitials(auth.user.value?.name || 'U') }}
             </span>
             <div class="d-none d-xl-block ps-2">
-              <div class="fw-bold">USER NAME</div>
-              <div class="mt-1 small text-primary">USER ROLE</div>
+              <div class="fw-bold">{{ auth.user.value?.name || 'User' }}</div>
+              <div class="mt-1 small text-primary">{{ auth.user.value?.role || '' }}</div>
             </div>
           </a>
           <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-            <a href="?page=profile" class="dropdown-item"
-              ><i class="bi bi-person me-2"></i> My Profile</a
-            >
-            <a href="?page=change-password" class="dropdown-item"
-              ><i class="bi bi-key me-2"></i> Change Password</a
-            >
+            <NuxtLink to="/profile" class="dropdown-item">
+              <i class="bi bi-person me-2"></i> Profil Saya
+            </NuxtLink>
+            <NuxtLink to="/profile/change-password" class="dropdown-item">
+              <i class="bi bi-key me-2"></i> Ganti Password
+            </NuxtLink>
             <div class="dropdown-divider"></div>
-            <a href="logout.php" class="dropdown-item text-danger"
-              ><i class="bi bi-box-arrow-right me-2"></i> Logout</a
-            >
+            <button type="button" class="dropdown-item text-danger" @click="handleLogout">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </button>
           </div>
         </div>
       </div>
@@ -292,4 +292,21 @@
 <script setup>
 const { toggleTheme } = useTheme();
 const { toggleSidebar } = useSidebar();
+const auth = useAuth();
+
+// Ambil inisial nama untuk avatar
+const getInitials = (name) => {
+  if (!name) return 'U';
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+// Logout: panggil API logout lalu redirect ke login
+const handleLogout = async () => {
+  await auth.logout();
+};
 </script>
