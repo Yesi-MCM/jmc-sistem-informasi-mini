@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'http://localhost:3000',
+        'https://jmc-hrd.vercel.app', // Ganti dengan domain frontend Vercel Anda
+    ],
 
     'allowed_origins_patterns' => [],
 
