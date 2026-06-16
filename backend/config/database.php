@@ -59,6 +59,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // Dynamic SSL CA resolution: converts relative path to absolute base_path for local dev, uses absolute path on Vercel
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA') ? (preg_match('/^([a-zA-Z]:|\/|\\\\)/', env('MYSQL_ATTR_SSL_CA')) ? env('MYSQL_ATTR_SSL_CA') : base_path(env('MYSQL_ATTR_SSL_CA'))) : null,
             ]) : [],
