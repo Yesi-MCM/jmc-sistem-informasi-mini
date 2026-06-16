@@ -10,7 +10,7 @@ Route::get('/api/documentation', function () {
     return view('swagger');
 });
 
-Route::get('/api-debug', function () {
+Route::get('/debug-info', function () {
     return response()->json([
         'request_uri' => $_SERVER['REQUEST_URI'] ?? null,
         'script_name' => $_SERVER['SCRIPT_NAME'] ?? null,
