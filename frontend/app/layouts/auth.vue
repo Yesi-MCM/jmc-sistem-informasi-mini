@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column flex-md-row page-login" data-bs-theme="theme">
+  <div class="d-flex flex-column flex-md-row page-login" :data-bs-theme="theme">
     <div
       class="login-cover bg-dark col-lg-7 d-flex align-items-end order-md-last d-none d-lg-block"
     >

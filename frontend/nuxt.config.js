@@ -1,8 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  // SPA mode: disable SSR entirely.
+  // This admin app relies heavily on localStorage (auth, theme, session) which
+  // is not available during Server-Side Rendering, causing hydration mismatches.
+  // As an internal tool, SEO is not a concern, so SPA mode is the right choice.
+  ssr: false,
+
   future: {
     compatibilityVersion: 4,
   },
+
 
   compatibilityDate: "2024-11-01",
 
