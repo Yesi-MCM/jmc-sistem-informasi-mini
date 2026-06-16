@@ -1,0 +1,428 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Modul Perhitungan Tunjangan Transport API",
+    "description": "Dokumentasi API untuk pengaturan dan perhitungan tunjangan transport pegawai - JMC Portal",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/allowance-settings": {
+      "get": {
+        "summary": "Mendapatkan pengaturan tunjangan transport yang aktif",
+        "tags": ["Pengaturan Tunjangan"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pengaturan aktif berhasil didapatkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllowanceSetting"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Otentikasi gagal"
+          }
+        }
+      },
+      "post": {
+        "summary": "Memperbarui atau membuat pengaturan tunjangan transport baru",
+        "description": "Aksi ini otomatis menonaktifkan pengaturan sebelumnya (is_active = false) dan mengaktifkan yang baru.",
+        "tags": ["Pengaturan Tunjangan"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["base_fare", "effective_start", "min_km", "max_km"],
+                "properties": {
+                  "base_fare": {
+                    "type": "number",
+                    "example": 5000,
+                    "description": "Tarif dasar per kilometer (dalam Rupiah)"
+                  },
+                  "effective_start": {
+                    "type": "string",
+                    "example": "16/06/2026",
+                    "description": "Format Tanggal: DD/MM/YYYY"
+                  },
+                  "min_km": {
+                    "type": "number",
+                    "example": 5,
+                    "description": "Batas minimal jarak dalam kilometer"
+                  },
+                  "max_km": {
+                    "type": "number",
+                    "example": 25,
+                    "description": "Batas maksimal jarak dalam kilometer"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Pengaturan berhasil diperbarui",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Pengaturan tunjangan berhasil disimpan"
+                      },
+                      "data": {
+                        "$ref": "#/components/schemas/AllowanceSetting"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validasi input gagal"
+            },
+            "403": {
+              "description": "Akses ditolak (Bukan Admin HRD)"
+            }
+          }
+        }
+      }
+    },
+    "/allowances/periods": {
+      "get": {
+        "summary": "Mendapatkan daftar periode bulanan kalkulasi tunjangan transport",
+        "tags": ["Kalkulasi Tunjangan"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "description": "Tahun filter (default tahun berjalan)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 2026
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar periode berhasil didapatkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": "integer",
+                      "example": 2026
+                    },
+                    "periods": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AllowancePeriod"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/allowances/periods/{id}": {
+      "get": {
+        "summary": "Mendapatkan detail perhitungan per pegawai untuk periode tertentu",
+        "tags": ["Kalkulasi Tunjangan"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID Periode Kalkulasi",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rincian kalkulasi berhasil didapatkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "$ref": "#/components/schemas/AllowancePeriod"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AllowanceDetail"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Periode tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/allowances/calculate": {
+      "post": {
+        "summary": "Menjalankan kalkulasi tunjangan transport untuk periode bulan/tahun",
+        "description": "Melakukan loop pada seluruh pegawai tetap (PKWTT), menghitung rounded km, hari masuk (dari rekap presensi >= 19 hari), dan nominal tunjangan.",
+        "tags": ["Kalkulasi Tunjangan"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["period_year", "period_month"],
+                "properties": {
+                  "period_year": {
+                    "type": "integer",
+                    "example": 2026
+                  },
+                  "period_month": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 12,
+                    "example": 5
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Kalkulasi berhasil dijalankan",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Kalkulasi tunjangan transport berhasil dijalankan."
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "period_id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "total_recipients": {
+                            "type": "integer",
+                            "example": 3
+                          },
+                          "total_amount": {
+                            "type": "number",
+                            "example": 3500000
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Kalkulasi ditolak karena status periode telah Locked atau hak akses tidak sah."
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Gunakan token JWT yang didapatkan setelah verifikasi OTP (/auth/verify-otp)"
+      }
+    },
+    "schemas": {
+      "AllowanceSetting": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "base_fare": {
+            "type": "string",
+            "example": "5000.00"
+          },
+          "effective_start": {
+            "type": "string",
+            "example": "2026-01-01"
+          },
+          "min_km": {
+            "type": "string",
+            "example": "5.00"
+          },
+          "max_km": {
+            "type": "string",
+            "example": "25.00"
+          },
+          "is_active": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "AllowancePeriod": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "month_num": {
+            "type": "integer",
+            "example": 5
+          },
+          "month_name": {
+            "type": "string",
+            "example": "Mei"
+          },
+          "year": {
+            "type": "integer",
+            "example": 2026
+          },
+          "total_recipients": {
+            "type": "integer",
+            "example": 3
+          },
+          "total_amount": {
+            "type": "number",
+            "example": 3500000
+          },
+          "status": {
+            "type": "string",
+            "example": "calculated"
+          },
+          "calculated_at": {
+            "type": "string",
+            "example": "16/06/2026 09:30"
+          },
+          "calculator_name": {
+            "type": "string",
+            "example": "Yessi Maria"
+          }
+        }
+      },
+      "AllowanceDetail": {
+        "type": "object",
+        "properties": {
+          "no": {
+            "type": "integer",
+            "example": 1
+          },
+          "employee_name": {
+            "type": "string",
+            "example": "Andri Eko Prasetyo"
+          },
+          "nip": {
+            "type": "string",
+            "example": "19900101"
+          },
+          "position": {
+            "type": "string",
+            "example": "Manager"
+          },
+          "department": {
+            "type": "string",
+            "example": "HRD"
+          },
+          "employment_type": {
+            "type": "string",
+            "example": "PKWTT"
+          },
+          "original_km": {
+            "type": "number",
+            "example": 15.5
+          },
+          "rounded_km": {
+            "type": "integer",
+            "example": 16
+          },
+          "attendance_days": {
+            "type": "integer",
+            "example": 21
+          },
+          "base_fare": {
+            "type": "number",
+            "example": 5000
+          },
+          "nominal": {
+            "type": "number",
+            "example": 1680000
+          },
+          "eligibility_status": {
+            "type": "string",
+            "example": "eligible"
+          },
+          "calculation_note": {
+            "type": "string",
+            "example": "Memenuhi syarat. Kalkulasi: Rp 5,000 x 16 km x 21 hari"
+          }
+        }
+      }
+    }
+  }
+}
