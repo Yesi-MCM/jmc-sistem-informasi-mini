@@ -51,15 +51,29 @@ DB_DATABASE=jmc_sistem_informasi_mini
 DB_USERNAME=root
 DB_PASSWORD=
 
-# Konfigurasi SMTP untuk Mailpit (OTP Mailer)
+# Opsi A: Konfigurasi SMTP untuk Mailpit (Rekomendasi Uji Coba Lokal)
 MAIL_MAILER=smtp
+MAIL_SCHEME=null
 MAIL_HOST=127.0.0.1
 MAIL_PORT=1025
 MAIL_USERNAME=null
 MAIL_PASSWORD=null
 MAIL_FROM_ADDRESS="no-reply@jmc-mini.local"
 MAIL_FROM_NAME="JMC Mini Portal"
+
+# Opsi B: Konfigurasi SMTP menggunakan Gmail
+MAIL_MAILER=smtp
+MAIL_SCHEME=null
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME="YOUR_GMAIL_ADDRESS@gmail.com"
+MAIL_PASSWORD="YOUR_GMAIL_APP_PASSWORD" # Sandi Aplikasi Google (16 karakter tanpa spasi)
+MAIL_FROM_ADDRESS="YOUR_GMAIL_ADDRESS@gmail.com"
+MAIL_FROM_NAME="JMC Mini Portal"
 ```
+
+> [!NOTE]
+> Untuk mendapatkan **Sandi Aplikasi Google (App Password)**, pastikan Verifikasi 2 Langkah aktif di akun Google Anda, kemudian buka [Keamanan Akun Google](https://myaccount.google.com/security), cari menu **Sandi Aplikasi (App Passwords)**, buat sandi baru, dan tempelkan kode 16 karakter tanpa spasi ke `MAIL_PASSWORD`.
 
 ### Langkah 3.3: Generate App Key
 Generate key enkripsi unik untuk Laravel:

@@ -109,6 +109,22 @@ Karena Anda tidak memiliki akses SSH langsung ke Vercel untuk menjalankan artisa
 | `GOOGLE_DRIVE_FOLDER_ID` | `ID_FOLDER_GOOGLE_DRIVE` | Folder ID di Google Drive |
 | `SESSION_DRIVER` | `database` | Harus database agar tidak menggunakan file |
 | `CACHE_STORE` | `database` | Harus database agar tidak menggunakan file |
+| `MAIL_MAILER` | `smtp` | Driver pengiriman email |
+| `MAIL_SCHEME` | `null` | Kosongkan untuk port 587 (STARTTLS otomatis) |
+| `MAIL_HOST` | `smtp.gmail.com` | Host SMTP Gmail |
+| `MAIL_PORT` | `587` | Port SMTP Gmail |
+| `MAIL_USERNAME` | `email-anda@gmail.com` | Akun Gmail Anda |
+| `MAIL_PASSWORD` | `sandi-aplikasi-google` | Sandi Aplikasi Google (16 karakter tanpa spasi) |
+| `MAIL_FROM_ADDRESS` | `email-anda@gmail.com` | Alamat email pengirim |
+| `MAIL_FROM_NAME` | `Portal HRD JMC` | Nama pengirim email |
+
+> [!IMPORTANT]
+> **Cara Mendapatkan Sandi Aplikasi Google (App Password):**
+> 1. Pastikan **Verifikasi 2 Langkah (2-Step Verification)** aktif di Akun Google Anda.
+> 2. Buka [Keamanan Akun Google](https://myaccount.google.com/security).
+> 3. Cari menu **Sandi Aplikasi (App Passwords)** di bagian pencarian atas atau di bagian Verifikasi 2 Langkah.
+> 4. Ketik nama aplikasi (misal: `JMC HRD`) lalu klik **Buat (Create)**.
+> 5. Salin kode 16 karakter yang muncul (misal: `abcd efgh ijkl mnop`). Masukkan ke `MAIL_PASSWORD` tanpa spasi (`abcdefghijklmnop`).
 
 5.  Klik **Deploy**. Vercel akan menghasilkan domain backend API Anda (contoh: `https://jmc-backend.vercel.app`).
 
